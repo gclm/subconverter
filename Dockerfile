@@ -1,6 +1,6 @@
 FROM tindy2013/subconverter AS Server
 
-FROM node:16-alpine AS web
+FROM node:14-alpine AS web
 WORKDIR /app
 COPY .. /app
 RUN npm install
