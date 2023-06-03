@@ -1,7 +1,7 @@
 <template>
   <header id="header" class="reveal">
     <h1>
-      <a href="/public">{{ siteName }}</a>
+      <a href="/">{{ siteName }}</a>
     </h1>
     <nav id="nav" ref="navBar">
       <ul>

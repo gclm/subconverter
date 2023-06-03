@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import NavBar from './components/header/NavBar.vue';
+import NavBar from './components/header/NavBar';
 export default {
   name: 'HeaderView',
   components: {

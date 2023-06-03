@@ -12,10 +12,10 @@
 
 <script>
 import DialogLayOut from 'components/common/dialog/DialogLayOut.vue';
-import NavBarMobile from './components/header/NavBarMobile.vue';
-import HeaderView from './HeaderView.vue';
-import ContentView from './ContentView.vue';
-import FooterView from './FooterView.vue';
+import NavBarMobile from './components/header/NavBarMobile';
+import HeaderView from './HeaderView';
+import ContentView from './ContentView';
+import FooterView from './FooterView';
 
 export default {
   name: 'LayoutView',

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import FooterBar from './components/footer/FooterBar.vue';
+import FooterBar from './components/footer/FooterBar';
 export default {
   name: 'FooterView',
   components: {

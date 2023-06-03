@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import HomeHeader from './HomeHeader.vue';
-import HomeForm from './HomeForm.vue';
+import HomeHeader from './HomeHeader';
+import HomeForm from './HomeForm';
 export default {
   name: 'HomeContent',
   components: {
