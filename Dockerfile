@@ -1,6 +1,7 @@
 FROM node:14-alpine AS web
 WORKDIR /app
 COPY . /app
+RUN ls -l && pwd
 RUN yarn
 RUN yarn run build
 
