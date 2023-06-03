@@ -18,9 +18,9 @@ const getSubLink = function (
       finalUrl =
         finalUrl + '&exclude=' + encodeURIComponent(moreConfig.exclude);
     }
-    if (moreConfig.remoteconfig != '') {
+    if (moreConfig.remoteConfig != '') {
       finalUrl =
-        finalUrl + '&config=' + encodeURIComponent(moreConfig.remoteconfig);
+        finalUrl + '&config=' + encodeURIComponent(moreConfig.remoteConfig);
     }
     if (moreConfig.emoji) {
       finalUrl = finalUrl + '&emoji=true';

@@ -42,7 +42,7 @@
             <li>
               <input
                 type="button"
-                value="参数"
+                value="配置"
                 class="alt"
                 @click="showMoreConfig()"
               />
@@ -80,11 +80,35 @@
             />
           </div>
           <div class="col-12" style="text-align: center; padding-top: 20px">
-            <input
-              type="text"
-              :placeholder="'远程配置：可选'"
-              v-model="moreConfig.remoteconfig"
-            />
+            <select
+              id="selectRemoteConfig"
+              v-model="remoteConfig"
+              @change="selectRemoteConfig($event)"
+            >
+              <option
+                v-for="option in remoteConfigs"
+                :key="option"
+                :value="option.url"
+              >
+                {{ option.title }}
+              </option>
+            </select>
+            <div
+              v-show="isShowManualRemoteConfig"
+              class="col-12"
+              style="text-align: center; padding-top: 20px"
+            >
+              <input
+                v-model="manualRemoteConfig"
+                type="text"
+                placeholder="请输入远程配置地址"
+              />
+            </div>
+            <!--            <input-->
+            <!--              type="text"-->
+            <!--              :placeholder="'远程配置：可选'"-->
+            <!--              v-model="moreConfig.remoteConfig"-->
+            <!--            />-->
           </div>
           <div
             class="col-12 col-12-narrower"
@@ -109,7 +133,7 @@
           <input
             type="text"
             readOnly="true"
-            placeholder="点击转换订阅链接"
+            placeholder="订阅链接链接地址"
             v-model.trim="returnUrl"
           />
         </div>
@@ -119,28 +143,31 @@
         >
           <ul class="actions">
             <li>
-              <input type="button" value="转换" @click="getSubUrl()" />
+              <input type="button" value="复制" @click="copySubUrl()" />
             </li>
           </ul>
         </div>
         <div
-          class="col-10 col-8-mobilep"
-          style="text-align: center; padding-top: 20px"
-        >
-          <input
-            type="text"
-            readOnly="true"
-            placeholder="点击生成短链接"
-            v-model.trim="returnShortUrl"
-          />
-        </div>
-        <div
-          class="col-2 col-4-mobilep"
+          class="col-3 off-2 col-4-mobilep"
           style="text-align: center; padding-top: 20px"
         >
           <ul class="actions">
             <li>
-              <input type="button" value="短链" @click="getShortUrl()" />
+              <input type="button" value="生成订阅链接" @click="getSubUrl()" />
+            </li>
+          </ul>
+        </div>
+        <div
+          class="col-3 off-1 col-4-mobilep"
+          style="text-align: center; padding-top: 20px"
+        >
+          <ul class="actions">
+            <li>
+              <input
+                type="button"
+                value="一键导入Clash"
+                @click="importClash()"
+              />
             </li>
           </ul>
         </div>
@@ -153,14 +180,15 @@
 import { request } from 'network';
 import utils from './utils.js';
 import dialogOut from 'components/common/dialog';
+
 export default {
   name: 'HomeForm',
   setup() {
     const ENV = {
-      DEFAULT_MORECONFIG: {
+      DEFAULT_MORE_CONFIG: {
         include: '',
         exclude: '',
-        remoteconfig: '',
+        remoteConfig: '',
         emoji: true,
         udp: true,
         sort: false,
@@ -188,6 +216,10 @@ export default {
         { value: 'default', text: window.config.apiUrl },
         { value: 'manual', text: '自定义后端 API 地址' },
       ],
+      manualRemoteConfig: '',
+      isShowManualRemoteConfig: false,
+      remoteConfig: window.config.remoteConfigList[0].url,
+      remoteConfigs: window.config.remoteConfigList,
       inputs: {
         buttonClass: '',
         inputValue: '',
@@ -214,7 +246,7 @@ export default {
     };
   },
   created() {
-    this.moreConfig = this.ENV.DEFAULT_MORECONFIG;
+    this.moreConfig = this.ENV.DEFAULT_MORE_CONFIG;
   },
   methods: {
     showMoreConfig() {
@@ -228,10 +260,20 @@ export default {
       dialogOut(this, Msg);
     },
     selectApi(event) {
-      if (event.target.value == 'manual') {
+      if (event.target.value === 'manual') {
         this.isShowManualApiUrl = true;
       } else {
         this.isShowManualApiUrl = false;
+      }
+    },
+    selectRemoteConfig(event) {
+      console.log(event.target.value);
+      console.log(event.target.value === 'manual');
+      if (event.target.value === 'manual') {
+        this.isShowManualRemoteConfig = true;
+        console.log('xxxxx', this.isShowManualRemoteConfig);
+      } else {
+        this.isShowManualRemoteConfig = false;
       }
     },
     selectTarget(event) {
@@ -257,7 +299,7 @@ export default {
       }
     },
     checkUrls() {
-      if (this.inputs.inputValue == '') {
+      if (this.inputs.inputValue === '') {
         this.showDialog('请填写正确的订阅地址');
         return false;
       } else {
@@ -268,12 +310,12 @@ export default {
     checkApi() {
       var apiSelect = document.getElementById('selectApi');
       var i = apiSelect.selectedIndex;
-      if (apiSelect.options[i].value == 'manual') {
+      if (apiSelect.options[i].value === 'manual') {
         this.apiUrl = this.manualApiUrl;
         if (!utils.regexCheck(this.apiUrl)) {
           this.showDialog('请填写正确的 API 地址');
           return false;
-        } else if (this.apiUrl.split('').slice(-1) == '/') {
+        } else if (this.apiUrl.split('').slice(-1) === '/') {
           this.apiUrl = this.apiUrl.substr(0, this.apiUrl.length - 1);
           return true;
         } else {
@@ -281,6 +323,24 @@ export default {
         }
       } else {
         this.apiUrl = apiSelect.options[i].text;
+        return true;
+      }
+    },
+    checkRemoteConfig() {
+      var remoteConfigSelect = document.getElementById('selectRemoteConfig');
+      var i = remoteConfigSelect.selectedIndex;
+      console.log(remoteConfigSelect);
+      console.log(remoteConfigSelect.options[i]);
+      if (remoteConfigSelect.options[i].value === 'manual') {
+        this.moreConfig.remoteConfig = this.manualRemoteConfig;
+        if (!utils.regexCheck(this.moreConfig.remoteConfig)) {
+          this.showDialog('请填写正确的 远程配置 地址');
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        this.moreConfig.remoteConfig = remoteConfigSelect.options[i].value;
         return true;
       }
     },
@@ -294,18 +354,31 @@ export default {
       );
     },
     checkAll() {
-      if (this.checkUrls() && this.checkApi()) {
+      if (this.checkUrls() && this.checkApi() && this.checkRemoteConfig()) {
         this.getFinalUrl();
       }
     },
     getSubUrl() {
       this.checkAll();
-      if (!this.returnUrl == '') {
+    },
+    copySubUrl() {
+      if (this.returnUrl === '') {
+        this.showDialog('请先填写必填项，生成订阅链接');
+      } else {
         this.toCopy(this.returnUrl, '订阅链接');
       }
     },
+    importClash() {
+      if (this.returnUrl === '') {
+        this.showDialog('请先填写必填项，生成订阅链接');
+        return false;
+      } else {
+        const url = 'clash://install-config?url=';
+        window.open(url + encodeURIComponent(this.returnUrl));
+      }
+    },
     getShortUrl() {
-      if (this.returnUrl == '') {
+      if (this.returnUrl === '') {
         this.checkAll();
       }
       let data = new FormData();

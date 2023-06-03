@@ -9,14 +9,27 @@ window.config = {
       target: '',
     },
     {
-      title: '短链接',
-      link: 'https://s.ops.ci',
+      title: 'GitHub',
+      link: 'https://github.com/gclm/subconverter',
       target: '_blank',
     },
+  ],
+  remoteConfigList: [
     {
-      title: 'GitHub',
-      link: 'https://github.com/stilleshan/subweb',
-      target: '_blank',
+      title: 'ACL-默认',
+      url: 'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR.ini',
+    },
+    {
+      title: 'ACL-全分组',
+      url: 'https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Full_AdblockPlus.ini',
+    },
+    {
+      title: '墨鱼-Clash配置',
+      url: 'https://raw.githubusercontent.com/ddgksf2013/Profile/master/ClashforWindows.yaml',
+    },
+    {
+      title: 'manual',
+      url: 'manual',
     },
   ],
 };
