@@ -9,7 +9,7 @@ WORKDIR /base
 
 FROM nginx:1.16-alpine
 COPY --from=Server /base /base
-COPY --from=frontend /app/dist /usr/share/nginx/html
+COPY --from=web /app/dist /usr/share/nginx/html
 COPY .. /app
 
 RUN apk add tzdata && \
