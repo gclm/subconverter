@@ -15,7 +15,7 @@ if [ $SITE_NAME ]; then
   sed -i "s#Subconverter Web#$SITE_NAME#g" /usr/share/nginx/html/conf/config.js
 fi
 
-nohup /base/subconverter & echo "启动成功"
+nohup /usr/bin/subconverter & echo "启动成功"
 
 init_nginx (){
   sed -i '$d' /etc/nginx/conf.d/default.conf

@@ -12,6 +12,7 @@ FROM nginx:1.25-alpine
 LABEL maintainer="gclm <gclmit@163.com>"
 
 COPY --from=Server /base /base
+COPY --from=Server /usr/bin/subconverter /usr/bin/subconverter
 COPY --from=web /app/dist /usr/share/nginx/html
 COPY .. /app
 
