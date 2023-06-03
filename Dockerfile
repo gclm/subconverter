@@ -1,9 +1,9 @@
-FROM node:14-alpine AS web
+FROM node:16-alpine AS web
 WORKDIR /app
 COPY . /app
 RUN ls -l && pwd
-RUN yarn
-RUN yarn run build
+RUN npm install
+RUN npm run build
 
 
 FROM tindy2013/subconverter:latest AS Server
