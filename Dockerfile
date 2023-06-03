@@ -4,7 +4,7 @@ COPY .. /app
 RUN npm install
 RUN npm run build
 
-FROM tindy2013/subconverter AS Server
+FROM tindy2013/subconverter:latest AS Server
 WORKDIR /base
 
 FROM nginx:1.16-alpine
