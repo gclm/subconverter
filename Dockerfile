@@ -7,7 +7,6 @@ RUN npm install
 RUN npm run build
 
 FROM nginx:1.16-alpine
-LABEL maintainer="gclm <gclmit@163.com>"
 COPY --from=Server /subconverter /base
 COPY --from=frontend /app/dist /usr/share/nginx/html
 COPY .. /app
