@@ -16,7 +16,7 @@ COPY --from=Server /usr/bin/subconverter /usr/bin/subconverter
 COPY --from=web /app/dist /usr/share/nginx/html
 COPY .. /app
 
-RUN apk add --no-cache tzdata \
+RUN apk add --no-cache tzdata curl wget vim \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
     && apk del tzdata
