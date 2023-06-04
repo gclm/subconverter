@@ -10,3 +10,20 @@
 - GitHub [gclm/subconverter](https://github.com/gclm/subconverter)  
 - Docker [gclmit/subconverter](https://hub.docker.com/r/gclmit/subconverter)
 
+## 使用教程
+
+### 基础使用教程
+```shell
+docker run -d --name subconverter --restart always \
+  -p 18080:80 \
+  gclmit/subconverter:latest
+```
+
+### 自定义配置
+ 复制配置文件，到指点目录，配置文件实例：[config.js](public/conf/config.js)
+```shell
+docker run -d --name subconverter --restart always \
+  -p 18080:80 \
+  -v /PATH/subweb/conf:/usr/share/nginx/html/conf \
+  gclmit/subconverter:latest
+```
