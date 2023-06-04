@@ -59,5 +59,8 @@ RUN apk add --no-cache --virtual .build-tools git g++ build-base linux-headers c
     apk add --no-cache --virtual subconverter-deps pcre2 libcurl yaml-cpp libevent && \
     apk del .build-tools .build-deps
 
+# set entry
+WORKDIR /base
+
 EXPOSE 80
 CMD [ "sh", "-c", "/app/start.sh" ]
