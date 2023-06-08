@@ -1,7 +1,6 @@
 window.config = {
   siteName: 'Subconverter Web',
   apiUrl: 'http://127.0.0.1:25500',
-  shortUrl: 'https://s.ops.ci',
   menuItem: [
     {
       title: '首页',
@@ -28,7 +27,7 @@ window.config = {
       url: 'https://raw.githubusercontent.com/ddgksf2013/Profile/master/ClashforWindows.yaml',
     },
     {
-      title: 'manual',
+      title: '自定义远程配置地址',
       url: 'manual',
     },
   ],
