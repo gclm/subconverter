@@ -57,7 +57,7 @@
           <input
             v-model="manualApiUrl"
             type="text"
-            placeholder="示例：https://sub.ops.ci"
+            placeholder="示例：https://sub.gclmit.club"
           />
         </div>
         <div
@@ -104,11 +104,6 @@
                 placeholder="请输入远程配置地址"
               />
             </div>
-            <!--            <input-->
-            <!--              type="text"-->
-            <!--              :placeholder="'远程配置：可选'"-->
-            <!--              v-model="moreConfig.remoteConfig"-->
-            <!--            />-->
           </div>
           <div
             class="col-12 col-12-narrower"
@@ -353,13 +348,10 @@ export default {
         this.moreConfig
       );
     },
-    checkAll() {
+    getSubUrl() {
       if (this.checkUrls() && this.checkApi() && this.checkRemoteConfig()) {
         this.getFinalUrl();
       }
-    },
-    getSubUrl() {
-      this.checkAll();
     },
     copySubUrl() {
       if (this.returnUrl === '') {
@@ -376,30 +368,6 @@ export default {
         const url = 'clash://install-config?url=';
         window.open(url + encodeURIComponent(this.returnUrl));
       }
-    },
-    getShortUrl() {
-      if (this.returnUrl === '') {
-        this.checkAll();
-      }
-      let data = new FormData();
-      data.append('longUrl', btoa(this.returnUrl));
-      request({
-        method: 'post',
-        url: this.shortUrl + '/short',
-        header: {
-          'Content-Type': 'application/form-data; charset=utf-8',
-        },
-        data: data,
-      })
-        .then((res) => {
-          if (res.data.Code === 1 && res.data.ShortUrl !== '') {
-            this.returnShortUrl = res.data.ShortUrl;
-            this.toCopy(res.data.ShortUrl, '短链接');
-          }
-        })
-        .catch(() => {
-          this.showDialog('短链接生成失败 请检查短链接服务是否可用');
-        });
     },
   },
 };
