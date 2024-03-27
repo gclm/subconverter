@@ -172,7 +172,6 @@
 </template>
 
 <script>
-import { request } from 'network';
 import utils from './utils.js';
 import dialogOut from 'components/common/dialog';
 
@@ -245,31 +244,16 @@ export default {
   },
   methods: {
     showMoreConfig() {
-      if (this.isShowMoreConfig) {
-        this.isShowMoreConfig = false;
-      } else {
-        this.isShowMoreConfig = true;
-      }
+      this.isShowMoreConfig = !this.isShowMoreConfig;
     },
     showDialog(Msg) {
       dialogOut(this, Msg);
     },
     selectApi(event) {
-      if (event.target.value === 'manual') {
-        this.isShowManualApiUrl = true;
-      } else {
-        this.isShowManualApiUrl = false;
-      }
+      this.isShowManualApiUrl = event.target.value === 'manual';
     },
     selectRemoteConfig(event) {
-      console.log(event.target.value);
-      console.log(event.target.value === 'manual');
-      if (event.target.value === 'manual') {
-        this.isShowManualRemoteConfig = true;
-        console.log('xxxxx', this.isShowManualRemoteConfig);
-      } else {
-        this.isShowManualRemoteConfig = false;
-      }
+      this.isShowManualRemoteConfig = event.target.value === 'manual';
     },
     selectTarget(event) {
       this.targetType = event.target.value;
@@ -278,12 +262,12 @@ export default {
       if (!url) {
         this.showDialog('复制失败 内容为空');
       } else {
-        var copyInput = document.createElement('input');
+        let copyInput = document.createElement('input');
         copyInput.setAttribute('value', url);
         document.body.appendChild(copyInput);
         copyInput.select();
         try {
-          var copyed = document.execCommand('copy');
+          let copyed = document.execCommand('copy');
           if (copyed) {
             document.body.removeChild(copyInput);
             this.showDialog(title + ' 复制成功');
@@ -303,8 +287,8 @@ export default {
       }
     },
     checkApi() {
-      var apiSelect = document.getElementById('selectApi');
-      var i = apiSelect.selectedIndex;
+      let apiSelect = document.getElementById('selectApi');
+      let i = apiSelect.selectedIndex;
       if (apiSelect.options[i].value === 'manual') {
         this.apiUrl = this.manualApiUrl;
         if (!utils.regexCheck(this.apiUrl)) {
@@ -322,8 +306,8 @@ export default {
       }
     },
     checkRemoteConfig() {
-      var remoteConfigSelect = document.getElementById('selectRemoteConfig');
-      var i = remoteConfigSelect.selectedIndex;
+      let remoteConfigSelect = document.getElementById('selectRemoteConfig');
+      let i = remoteConfigSelect.selectedIndex;
       console.log(remoteConfigSelect);
       console.log(remoteConfigSelect.options[i]);
       if (remoteConfigSelect.options[i].value === 'manual') {
