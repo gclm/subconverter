@@ -330,14 +330,8 @@ export default {
         }
         this.dialogLoadConfigVisible = false;
         this.isShowMoreConfig = true;
-        this.this.showDialog("长/短链接已成功解析为订阅信息");
+        this.showDialog("长/短链接已成功解析为订阅信息");
       })();
-    },
-    checkUrls() {
-      if (this.urls === "") {
-        this.showDialog("请填写正确的订阅地址");
-        return false;
-      }
     },
     checkApi() {
       let apiSelect = document.getElementById("selectApi");
@@ -361,8 +355,8 @@ export default {
     checkRemoteConfig() {
       let remoteConfigSelect = document.getElementById("selectRemoteConfig");
       let i = remoteConfigSelect.selectedIndex;
-      console.log(remoteConfigSelect);
-      console.log(remoteConfigSelect.options[i]);
+      // console.log("checkRemoteConfig1",remoteConfigSelect);
+      // console.log("checkRemoteConfig2",remoteConfigSelect.options[i]);
       if (remoteConfigSelect.options[i].value === "manual") {
         this.moreConfig.remoteConfig = this.manualRemoteConfig;
         if (!links.regexCheck(this.moreConfig.remoteConfig)) {
@@ -385,9 +379,13 @@ export default {
         this.moreConfig
       );
     },
-
     getSubUrl() {
-      if (this.checkUrls() && this.checkApi() && this.checkRemoteConfig()) {
+      if (this.urls === "") {
+        this.showDialog("请填写正确的订阅地址");
+        return false;
+      }
+      // console.log("xxxx",this.checkApi(),this.checkRemoteConfig());
+      if (this.checkApi() && this.checkRemoteConfig()) {
         this.getFinalUrl();
       }
     },
