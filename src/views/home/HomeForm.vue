@@ -5,8 +5,8 @@
         <div class="col-12">
           <textarea
             id="message"
-            v-model.trim="inputs.inputValue"
-            :placeholder="inputs.placeholder"
+            v-model.trim="urls"
+            placeholder="多订阅链接或节点请确保每行一条，支持手动使用|分割多链接或节点"
             rows="3"
           ></textarea>
         </div>
@@ -143,7 +143,17 @@
           </ul>
         </div>
         <div
-          class="col-3 off-2 col-4-mobilep"
+          class="col-2  col-3-mobilep"
+          style="text-align: center; padding-top: 20px"
+        >
+          <ul class="actions">
+            <li>
+              <input type="button" value="解析订阅链接" @click="dialogLoadConfigVisible = true" />
+            </li>
+          </ul>
+        </div>
+        <div
+          class="col-2 off-2 col-3-mobilep"
           style="text-align: center; padding-top: 20px"
         >
           <ul class="actions">
@@ -153,7 +163,7 @@
           </ul>
         </div>
         <div
-          class="col-3 off-1 col-4-mobilep"
+          class="col-2 off-2 col-3-mobilep"
           style="text-align: center; padding-top: 20px"
         >
           <ul class="actions">
@@ -168,75 +178,121 @@
         </div>
       </div>
     </form>
+    <el-dialog v-model="dialogLoadConfigVisible" title="订阅链接解析" width="500">
+      <el-form label-position="left">
+        <el-form-item prop="uploadConfig">
+          <el-input
+            v-model="analyzeSubUrlUrl"
+            type="textarea"
+            :autosize="{ minRows: 15, maxRows: 15}"
+            maxlength="5000"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="analyzeSubUrlUrl = ''; dialogLoadConfigVisible = false">取消</el-button>
+          <el-button type="primary" :disabled="analyzeSubUrlUrl.length === 0" @click="parseSubUrl()">
+            确 定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!--    <el-dialog-->
+    <!--      v-model="dialogLoadConfigVisible" title="订阅链接解析"-->
+    <!--      width="500"-->
+    <!--    >-->
+    <!--      <div slot="title">-->
+    <!--        可以从生成的长/短链接中解析信息,填入页面中去-->
+    <!--      </div>-->
+    <!--      <el-form label-position="left">-->
+    <!--        <el-form-item prop="uploadConfig">-->
+    <!--          <el-input-->
+    <!--            v-model="analyzeSubUrlUrl"-->
+    <!--            type="textarea"-->
+    <!--            :autosize="{ minRows: 15, maxRows: 15}"-->
+    <!--            maxlength="5000"-->
+    <!--            show-word-limit-->
+    <!--          ></el-input>-->
+    <!--        </el-form-item>-->
+    <!--      </el-form>-->
+    <!--      <div slot="footer" class="dialog-footer">-->
+    <!--        <el-button type="primary" @click="analyzeSubUrlUrl = ''; dialogLoadConfigVisible = false">取 消</el-button>-->
+    <!--        <el-button-->
+    <!--          type="primary"-->
+    <!--          @click="parseSubUrl"-->
+    <!--          :disabled="analyzeSubUrlUrl.length === 0"-->
+    <!--        >确 定-->
+    <!--        </el-button>-->
+    <!--      </div>-->
+    <!--    </el-dialog>-->
   </div>
 </template>
 
 <script>
-import utils from './utils.js';
-import dialogOut from 'components/common/dialog';
+import links from "@/utils/links.js";
+import dialogOut from "components/common/dialog";
+
 
 export default {
-  name: 'HomeForm',
+  name: "HomeForm",
   setup() {
     const ENV = {
       DEFAULT_MORE_CONFIG: {
-        include: '',
-        exclude: '',
-        remoteConfig: '',
+        include: "",
+        exclude: "",
+        remoteConfig: "",
         emoji: true,
         udp: true,
         sort: false,
         scv: false,
-        list: false,
-      },
+        list: false
+      }
     };
     return {
-      ENV,
+      ENV
     };
   },
   data() {
     return {
       moreConfig: {},
       isShowMoreConfig: false,
-      urls: [],
-      returnUrl: '',
-      returnShortUrl: '',
+      dialogLoadConfigVisible: false,
+      analyzeSubUrlUrl: "",
+      urls: "",
+      returnUrl: "",
+      returnShortUrl: "",
       apiUrl: window.config.apiUrl,
       shortUrl: window.config.shortUrl,
-      manualApiUrl: '',
+      manualApiUrl: "",
       isShowManualApiUrl: false,
-      api: 'default',
+      api: "default",
       apis: [
-        { value: 'default', text: window.config.apiUrl },
-        { value: 'manual', text: '自定义后端 API 地址' },
+        { value: "default", text: window.config.apiUrl },
+        { value: "manual", text: "自定义后端 API 地址" }
       ],
-      manualRemoteConfig: '',
+      manualRemoteConfig: "",
       isShowManualRemoteConfig: false,
       remoteConfig: window.config.remoteConfigList[0].url,
       remoteConfigs: window.config.remoteConfigList,
-      inputs: {
-        buttonClass: '',
-        inputValue: '',
-        placeholder:
-          '多订阅链接或节点请确保每行一条\n支持手动使用"|"分割多链接或节点',
-      },
-      targetType: 'clash',
+      targetType: "clash",
       targetTypes: [
-        { value: 'clash', text: 'Clash' },
-        { value: 'clashr', text: 'ClashR' },
-        { value: 'v2ray', text: 'V2Ray' },
-        { value: 'quan', text: 'Quantumult' },
-        { value: 'quanx', text: 'Quantumult X' },
-        { value: 'surge&ver=2', text: 'SurgeV2' },
-        { value: 'surge&ver=3', text: 'SurgeV3' },
-        { value: 'surge&ver=4', text: 'SurgeV4' },
-        { value: 'surfboard', text: 'Surfboard' },
-        { value: 'ss', text: 'SS (SIP002)' },
-        { value: 'sssub', text: 'SS Android' },
-        { value: 'ssd', text: 'SSD' },
-        { value: 'ssr', text: 'SSR' },
-        { value: 'loon', text: 'Loon' },
-      ],
+        { value: "clash", text: "Clash" },
+        { value: "clashr", text: "ClashR" },
+        { value: "v2ray", text: "V2Ray" },
+        { value: "quan", text: "Quantumult" },
+        { value: "quanx", text: "Quantumult X" },
+        { value: "surge&ver=2", text: "SurgeV2" },
+        { value: "surge&ver=3", text: "SurgeV3" },
+        { value: "surge&ver=4", text: "SurgeV4" },
+        { value: "surfboard", text: "Surfboard" },
+        { value: "ss", text: "SS (SIP002)" },
+        { value: "sssub", text: "SS Android" },
+        { value: "ssd", text: "SSD" },
+        { value: "ssr", text: "SSR" },
+        { value: "loon", text: "Loon" }
+      ]
     };
   },
   created() {
@@ -250,51 +306,76 @@ export default {
       dialogOut(this, Msg);
     },
     selectApi(event) {
-      this.isShowManualApiUrl = event.target.value === 'manual';
+      this.isShowManualApiUrl = event.target.value === "manual";
     },
     selectRemoteConfig(event) {
-      this.isShowManualRemoteConfig = event.target.value === 'manual';
+      this.isShowManualRemoteConfig = event.target.value === "manual";
     },
     selectTarget(event) {
       this.targetType = event.target.value;
     },
     toCopy(url, title) {
       if (!url) {
-        this.showDialog('复制失败 内容为空');
+        this.showDialog("复制失败 内容为空");
       } else {
-        let copyInput = document.createElement('input');
-        copyInput.setAttribute('value', url);
+        let copyInput = document.createElement("input");
+        copyInput.setAttribute("value", url);
         document.body.appendChild(copyInput);
         copyInput.select();
         try {
-          let copyed = document.execCommand('copy');
+          let copyed = document.execCommand("copy");
           if (copyed) {
             document.body.removeChild(copyInput);
-            this.showDialog(title + ' 复制成功');
+            this.showDialog(title + " 复制成功");
           }
         } catch {
-          this.showDialog('复制失败 请检查浏览器兼容');
+          this.showDialog("复制失败 请检查浏览器兼容");
         }
       }
     },
-    checkUrls() {
-      if (this.inputs.inputValue === '') {
-        this.showDialog('请填写正确的订阅地址');
+    parseSubUrl() {
+      if (this.analyzeSubUrlUrl.trim() === "" || !this.analyzeSubUrlUrl.trim().includes("http")) {
+        this.showDialog("待解析的订阅链接不合法");
         return false;
-      } else {
-        this.urls = this.inputs.inputValue;
-        return true;
+      }
+      (async () => {
+        let url;
+        try {
+          url = new URL(this.analyzeSubUrlUrl);
+        } catch (error) {
+          this.showDialog("请输入正确的订阅地址!");
+          return;
+        }
+        let param = new URLSearchParams(url.search);
+        if (param.get("url")) {
+          this.urls = param.get("url");
+        }
+        if (param.get("exclude")) {
+          this.moreConfig.exclude = param.get("exclude");
+        }
+        if (param.get("include")) {
+          this.moreConfig.include = param.get("include");
+        }
+        this.dialogLoadConfigVisible = false;
+        this.isShowMoreConfig = true;
+        this.this.showDialog("长/短链接已成功解析为订阅信息");
+      })();
+    },
+    checkUrls() {
+      if (this.urls === "") {
+        this.showDialog("请填写正确的订阅地址");
+        return false;
       }
     },
     checkApi() {
-      let apiSelect = document.getElementById('selectApi');
+      let apiSelect = document.getElementById("selectApi");
       let i = apiSelect.selectedIndex;
-      if (apiSelect.options[i].value === 'manual') {
+      if (apiSelect.options[i].value === "manual") {
         this.apiUrl = this.manualApiUrl;
-        if (!utils.regexCheck(this.apiUrl)) {
-          this.showDialog('请填写正确的 API 地址');
+        if (!links.regexCheck(this.apiUrl)) {
+          this.showDialog("请填写正确的 API 地址");
           return false;
-        } else if (this.apiUrl.split('').slice(-1) === '/') {
+        } else if (this.apiUrl.split("").slice(-1) === "/") {
           this.apiUrl = this.apiUrl.substr(0, this.apiUrl.length - 1);
           return true;
         } else {
@@ -306,14 +387,14 @@ export default {
       }
     },
     checkRemoteConfig() {
-      let remoteConfigSelect = document.getElementById('selectRemoteConfig');
+      let remoteConfigSelect = document.getElementById("selectRemoteConfig");
       let i = remoteConfigSelect.selectedIndex;
       console.log(remoteConfigSelect);
       console.log(remoteConfigSelect.options[i]);
-      if (remoteConfigSelect.options[i].value === 'manual') {
+      if (remoteConfigSelect.options[i].value === "manual") {
         this.moreConfig.remoteConfig = this.manualRemoteConfig;
-        if (!utils.regexCheck(this.moreConfig.remoteConfig)) {
-          this.showDialog('请填写正确的 远程配置 地址');
+        if (!links.regexCheck(this.moreConfig.remoteConfig)) {
+          this.showDialog("请填写正确的 远程配置 地址");
           return false;
         } else {
           return true;
@@ -324,7 +405,7 @@ export default {
       }
     },
     getFinalUrl() {
-      this.returnUrl = utils.getSubLink(
+      this.returnUrl = links.getSubLink(
         this.urls,
         this.apiUrl,
         this.targetType,
@@ -332,27 +413,28 @@ export default {
         this.moreConfig
       );
     },
+
     getSubUrl() {
       if (this.checkUrls() && this.checkApi() && this.checkRemoteConfig()) {
         this.getFinalUrl();
       }
     },
     copySubUrl() {
-      if (this.returnUrl === '') {
-        this.showDialog('请先填写必填项，生成订阅链接');
+      if (this.returnUrl === "") {
+        this.showDialog("请先填写必填项，生成订阅链接");
       } else {
-        this.toCopy(this.returnUrl, '订阅链接');
+        this.toCopy(this.returnUrl, "订阅链接");
       }
     },
     importClash() {
-      if (this.returnUrl === '') {
-        this.showDialog('请先填写必填项，生成订阅链接');
+      if (this.returnUrl === "") {
+        this.showDialog("请先填写必填项，生成订阅链接");
         return false;
       } else {
-        const url = 'clash://install-config?url=';
+        const url = "clash://install-config?url=";
         window.open(url + encodeURIComponent(this.returnUrl));
       }
-    },
-  },
+    }
+  }
 };
 </script>

@@ -2,7 +2,7 @@
 FROM tindy2013/subconverter:latest AS builder
 
 # 编译 前端
-FROM node:16-alpine AS web
+FROM node:20-alpine AS web
 WORKDIR /app
 COPY . /app
 RUN ls -l && pwd
